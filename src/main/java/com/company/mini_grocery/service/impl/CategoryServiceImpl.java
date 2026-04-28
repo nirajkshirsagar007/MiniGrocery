@@ -1,9 +1,10 @@
-package com.company.mini_grocery.service;
+package com.company.mini_grocery.service.impl;
 
 import com.company.mini_grocery.dto.request.CategoryRequest;
 import com.company.mini_grocery.dto.response.CategoryResponse;
 import com.company.mini_grocery.entity.Category;
 import com.company.mini_grocery.repository.CategoryRepository;
+import com.company.mini_grocery.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImpl implements CategoryService{
+public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 
     public CategoryResponse createCategory(CategoryRequest request){
