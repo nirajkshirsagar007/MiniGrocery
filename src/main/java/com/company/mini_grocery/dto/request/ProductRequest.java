@@ -12,7 +12,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CreateProductRequest {
+public class ProductRequest {
 
     @NotBlank(message = "Product name is required")
     private String name;

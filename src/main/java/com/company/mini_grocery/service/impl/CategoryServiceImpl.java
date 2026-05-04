@@ -40,6 +40,25 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToResponse(category);
     }
 
+    @Override
+    public CategoryResponse updateCategory(Long id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Category not found"));
+        category.setName(request.getName());
+        category.setDescription(request.getDescription());
+
+        Category updated = categoryRepository.saveAndFlush(category);
+
+        return  mapToResponse(updated);
+    }
+
+    public void deleteCategory(Long id){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Category not found"));
+
+        categoryRepository.delete(category);
+    }
+
     private CategoryResponse mapToResponse(Category category) {
         return CategoryResponse.builder()
                 .id(category.getId())
