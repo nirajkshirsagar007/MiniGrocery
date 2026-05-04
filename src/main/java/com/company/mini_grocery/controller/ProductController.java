@@ -1,6 +1,6 @@
 package com.company.mini_grocery.controller;
 
-import com.company.mini_grocery.dto.request.CreateProductRequest;
+import com.company.mini_grocery.dto.request.ProductRequest;
 import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.service.ProductService;
 import jakarta.validation.Valid;
@@ -16,7 +16,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ProductResponse createProduct(@Valid @RequestBody CreateProductRequest request){
+    public ProductResponse createProduct(@Valid @RequestBody ProductRequest request){
         return productService.createProduct(request);
     }
 
@@ -28,5 +28,16 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse getProductById(@PathVariable Long id){
         return productService.getProductById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ProductResponse updateProductById(@PathVariable Long id, @Valid @RequestBody ProductRequest request){
+        return  productService.updateProduct(id,request);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deleteProductById(@PathVariable Long id){
+        productService.deleteProduct(id);
+        return "Product deleted Successfully";
     }
 }

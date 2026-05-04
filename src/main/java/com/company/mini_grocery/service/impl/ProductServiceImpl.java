@@ -1,6 +1,6 @@
 package com.company.mini_grocery.service.impl;
 
-import com.company.mini_grocery.dto.request.CreateProductRequest;
+import com.company.mini_grocery.dto.request.ProductRequest;
 import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.entity.Category;
 import com.company.mini_grocery.entity.Product;
@@ -18,7 +18,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
-    public ProductResponse createProduct(CreateProductRequest request){
+    public ProductResponse createProduct(ProductRequest request){
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(()-> new RuntimeException("Category not found"));
 
@@ -48,6 +48,29 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(()->new RuntimeException("Product not found"));
         return mapToResponse(product);
 
+    }
+
+    public ProductResponse updateProduct(Long id, ProductRequest request){
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Product not found"));
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("Category not found."));
+
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product.setQuantity(request.getQuantity());
+        product.setExpiryDate(request.getExpiryDate());
+        product.setBarcode(request.getBarcode());
+
+        Product updated = productRepository.save(product);
+        return mapToResponse(updated);
+    }
+
+    public void deleteProduct(Long id){
+        Product product = productRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("Product not found"));
+        productRepository.delete(product);
     }
 
     private ProductResponse mapToResponse(Product product){
