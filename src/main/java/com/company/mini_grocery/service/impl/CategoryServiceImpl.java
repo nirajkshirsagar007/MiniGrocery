@@ -3,6 +3,7 @@ package com.company.mini_grocery.service.impl;
 import com.company.mini_grocery.dto.request.CategoryRequest;
 import com.company.mini_grocery.dto.response.CategoryResponse;
 import com.company.mini_grocery.entity.Category;
+import com.company.mini_grocery.exception.CategoryNotFoundException;
 import com.company.mini_grocery.repository.CategoryRepository;
 import com.company.mini_grocery.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -36,14 +37,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     public CategoryResponse getCategoryById(Long id){
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Category not found with id " + id));
+                .orElseThrow(()-> new CategoryNotFoundException("Category not found with id " + id));
         return mapToResponse(category);
     }
 
     @Override
     public CategoryResponse updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Category not found"));
+                .orElseThrow(()->new CategoryNotFoundException("Category not found"));
         category.setName(request.getName());
         category.setDescription(request.getDescription());
 
@@ -54,7 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     public void deleteCategory(Long id){
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Category not found"));
+                .orElseThrow(()-> new CategoryNotFoundException("Category not found"));
 
         categoryRepository.delete(category);
     }
