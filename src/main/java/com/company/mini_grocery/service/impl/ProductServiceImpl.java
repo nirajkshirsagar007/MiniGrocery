@@ -4,6 +4,8 @@ import com.company.mini_grocery.dto.request.ProductRequest;
 import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.entity.Category;
 import com.company.mini_grocery.entity.Product;
+import com.company.mini_grocery.exception.CategoryNotFoundException;
+import com.company.mini_grocery.exception.ProductNotFoundException;
 import com.company.mini_grocery.repository.CategoryRepository;
 import com.company.mini_grocery.repository.ProductRepository;
 import com.company.mini_grocery.service.ProductService;
@@ -20,7 +22,7 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductResponse createProduct(ProductRequest request){
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(()-> new RuntimeException("Category not found"));
+                .orElseThrow(()-> new CategoryNotFoundException("Category not found"));
 
         Product product = Product.builder()
                 .name(request.getName())
@@ -45,17 +47,17 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductResponse getProductById(Long id){
         Product product = productRepository.findById( id)
-                .orElseThrow(()->new RuntimeException("Product not found"));
+                .orElseThrow(()->new ProductNotFoundException("Product not found with id: "+ id));
         return mapToResponse(product);
 
     }
 
     public ProductResponse updateProduct(Long id, ProductRequest request){
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Product not found"));
+                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("Category not found."));
+                .orElseThrow(()-> new CategoryNotFoundException("Category not found."));
 
         product.setName(request.getName());
         product.setPrice(request.getPrice());
@@ -69,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 
     public void deleteProduct(Long id){
         Product product = productRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Product not found"));
+                .orElseThrow(()->new ProductNotFoundException("Product not found"));
         productRepository.delete(product);
     }
 
