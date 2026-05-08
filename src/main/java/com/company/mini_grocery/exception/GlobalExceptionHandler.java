@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
         return ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
                 .status(HttpStatus.BAD_REQUEST.value())
-                .message("Stock Error")
+                .message("Insuffecient Stock")
                 .path(request.getRequestURI())
                 .build();
     }
