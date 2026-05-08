@@ -5,6 +5,7 @@ import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.entity.Category;
 import com.company.mini_grocery.entity.Product;
 import com.company.mini_grocery.exception.CategoryNotFoundException;
+import com.company.mini_grocery.exception.InsuffecientStockException;
 import com.company.mini_grocery.exception.ProductNotFoundException;
 import com.company.mini_grocery.repository.CategoryRepository;
 import com.company.mini_grocery.repository.ProductRepository;
@@ -12,6 +13,7 @@ import com.company.mini_grocery.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -73,6 +75,48 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(()->new ProductNotFoundException("Product not found"));
         productRepository.delete(product);
+    }
+
+    @Override
+    public ProductResponse addStock(Long id, Integer quantity) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new ProductNotFoundException("Product Not found with id: "+ id));
+
+        product.setQuantity(product.getQuantity() + quantity);
+        return  mapToResponse(productRepository.save(product));
+    }
+
+    public ProductResponse reduceStock(Long id, Integer quantity){
+        Product product = productRepository.findById(id)
+                .orElseThrow(()-> new ProductNotFoundException("Product not found with id: "+ id ));
+
+        if(product.getQuantity() < quantity){
+            throw new InsuffecientStockException("Insuffecient Stock ");
+        }
+
+        product.setQuantity(product.getQuantity() - quantity);
+
+        return mapToResponse(productRepository.save(product));
+    }
+
+    public List<ProductResponse> getLowStockProduct(Integer threshold){
+
+        return  productRepository.findAll()
+                .stream()
+                .filter(product -> product.getQuantity() <= threshold)
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getExpiredProducts(){
+        LocalDate today = LocalDate.now();
+
+        return  productRepository.findAll()
+                .stream()
+                .filter(product -> product.getExpiryDate() != null &&
+                        product.getExpiryDate().isBefore(today))
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private ProductResponse mapToResponse(Product product){
