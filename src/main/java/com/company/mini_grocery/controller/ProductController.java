@@ -6,6 +6,7 @@ import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -62,5 +63,48 @@ public class ProductController {
     @GetMapping("/expired")
     public List<ProductResponse> getExpiredProducts(){
         return productService.getExpiredProducts();
+    }
+
+    @GetMapping("/paginated")
+    public Page<ProductResponse> getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir){
+
+        return productService.getProducts(page,size,sortBy,sortDir);
+    }
+
+    @GetMapping("/search")
+    public Page<ProductResponse> searchProducts(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size){
+        return productService.searchProducts(name, page, size);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public Page<ProductResponse> getProductByCategory(
+            @PathVariable Long categoryId,
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size){
+        return productService.getProductByCategoryId(
+                categoryId,
+                page,
+                size
+        );
+    }
+
+    @GetMapping("/category/name/{categoryName}")
+    public Page<ProductResponse> getProductByCategoryName(
+            @PathVariable String categoryName,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size){
+        return productService.getProductByCategoryName(
+                categoryName,
+                page,
+                size
+        );
     }
 }
