@@ -11,6 +11,7 @@ import com.company.mini_grocery.repository.CategoryRepository;
 import com.company.mini_grocery.repository.ProductRepository;
 import com.company.mini_grocery.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -117,6 +118,48 @@ public class ProductServiceImpl implements ProductService {
                         product.getExpiryDate().isBefore(today))
                 .map(this::mapToResponse)
                 .toList();
+    }
+
+    public Page<ProductResponse>getProducts(int page, int size, String sortBy, String sortDir){
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productRepository.findAll(pageable)
+                .map(this::mapToResponse);
+    }
+
+    public Page<ProductResponse> searchProducts(
+            String name,
+            int page,
+            int size){
+        Pageable pageable = PageRequest.of(page, size);
+
+        return productRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(this::mapToResponse);
+    }
+
+    public Page<ProductResponse> getProductByCategoryId(
+            Long categoryId,
+            int page,
+            int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return productRepository.findByCategoryId(categoryId,pageable)
+                .map(this::mapToResponse);
+    }
+
+    public Page<ProductResponse> getProductByCategoryName(
+            String categoryName,
+            int page,
+            int size){
+        Pageable pageable = PageRequest.of(page,size);
+
+        return productRepository.findByCategory_Name(
+                categoryName,
+                pageable
+        );
     }
 
     private ProductResponse mapToResponse(Product product){
