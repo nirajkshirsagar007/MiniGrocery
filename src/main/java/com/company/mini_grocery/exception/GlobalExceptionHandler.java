@@ -65,9 +65,11 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleInsuffecientStockError(InsuffecientStockException ex, HttpServletRequest request)
     {
         return ErrorResponse.builder()
+                .success(false)
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .message("Insuffecient Stock")
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Product Not Found")
+                .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build();
     }

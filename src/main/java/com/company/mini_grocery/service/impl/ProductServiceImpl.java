@@ -41,7 +41,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> getAllProduct() {
+    public List<ProductResponse> getAllProducts() {
         return productRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
         return mapToResponse(productRepository.save(product));
     }
 
-    public List<ProductResponse> getLowStockProduct(Integer threshold){
+    public List<ProductResponse> getLowStockProducts(Integer threshold){
 
         return  productRepository.findAll()
                 .stream()

@@ -1,5 +1,6 @@
 package com.company.mini_grocery.controller;
 
+import com.company.mini_grocery.common.ApiResponse;
 import com.company.mini_grocery.dto.request.ProductRequest;
 import com.company.mini_grocery.dto.request.UpdateStockRequest;
 import com.company.mini_grocery.dto.response.ProductResponse;
@@ -18,93 +19,156 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ProductResponse createProduct(@Valid @RequestBody ProductRequest request){
-        return productService.createProduct(request);
+    public ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request){
+
+        ProductResponse productResponse = productService.createProduct(request);
+        return ApiResponse.<ProductResponse>builder()
+                .success(true)
+                .message("Product created successfully")
+                .data(productResponse)
+                .build();
     }
 
     @GetMapping
-    public List<ProductResponse> getAllProducts(){
-        return productService.getAllProduct();
+    public ApiResponse<List<ProductResponse>> getAllProducts(){
+        List<ProductResponse> response =  productService.getAllProducts();
+        return ApiResponse.<List<ProductResponse>>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/{id}")
-    public ProductResponse getProductById(@PathVariable Long id){
-        return productService.getProductById(id);
+    public ApiResponse<ProductResponse> getProductById(@PathVariable Long id){
+
+        ProductResponse response = productService.getProductById(id);
+
+        return ApiResponse.<ProductResponse>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 
     @PutMapping("/{id}")
-    public ProductResponse updateProductById(@PathVariable Long id,
+    public ApiResponse<ProductResponse> updateProductById(@PathVariable Long id,
                                              @Valid @RequestBody ProductRequest request){
-        return  productService.updateProduct(id,request);
+        ProductResponse response = productService.updateProduct(id,request);
+        return ApiResponse.<ProductResponse>builder()
+                .success(true)
+                .message("Product updated successfully")
+                .data(response)
+                .build();
     }
 
     @DeleteMapping("/{id}")
-    public String deleteProductById(@PathVariable Long id){
+    public ApiResponse<Void> deleteProductById(@PathVariable Long id){
         productService.deleteProduct(id);
-        return "Product deleted Successfully";
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message("Product deleted successfully")
+                .data(null)
+                .build();
     }
 
     @PatchMapping("/{id}/add-stock")
-    public ProductResponse addStock(@PathVariable Long id,
+    public ApiResponse<ProductResponse> addStock(@PathVariable Long id,
                                     @Valid @RequestBody UpdateStockRequest request) {
-        return  productService.addStock(id,request.getQuantity());
+        ProductResponse response = productService.addStock(id,request.getQuantity());
+        return ApiResponse.<ProductResponse>builder()
+                .success(true)
+                .message("Stock added successfully")
+                .data(response)
+                .build();
     }
 
     @PatchMapping("/{id}/reduce-stock")
-    public ProductResponse reduceStock(@PathVariable Long id,@Valid @RequestBody UpdateStockRequest request){
-        return  productService.reduceStock(id,request.getQuantity());
+    public ApiResponse<ProductResponse> reduceStock(@PathVariable Long id,@Valid @RequestBody UpdateStockRequest request){
+        ProductResponse response = productService.reduceStock(id,request.getQuantity());
+
+        return ApiResponse.<ProductResponse>builder()
+                .success(true)
+                .message("Stock reduced successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/low-stock")
-    public List<ProductResponse> getLowStockProduct(@RequestParam Integer threshold){
-        return productService.getLowStockProduct(threshold);
+    public ApiResponse<List<ProductResponse>> getLowStockProduct(@RequestParam Integer threshold){
+        List<ProductResponse> response = productService.getLowStockProducts(threshold);
+
+        return ApiResponse.<List<ProductResponse>>builder()
+                .success(true)
+                .message("Low stock fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/expired")
-    public List<ProductResponse> getExpiredProducts(){
-        return productService.getExpiredProducts();
+    public ApiResponse<List<ProductResponse>> getExpiredProducts(){
+
+        List<ProductResponse> response = productService.getExpiredProducts();
+        return ApiResponse.<List<ProductResponse>>builder()
+                .success(true)
+                .message("Expired products fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/paginated")
-    public Page<ProductResponse> getProducts(
+    public ApiResponse<Page<ProductResponse>> getProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDir){
 
-        return productService.getProducts(page,size,sortBy,sortDir);
+        Page<ProductResponse> response =  productService.getProducts(page,size,sortBy,sortDir);
+
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/search")
-    public Page<ProductResponse> searchProducts(
+    public ApiResponse<Page<ProductResponse>> searchProducts(
             @RequestParam String name,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size){
-        return productService.searchProducts(name, page, size);
+        Page<ProductResponse> response = productService.searchProducts(name, page, size);
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/category/{categoryId}")
-    public Page<ProductResponse> getProductByCategory(
+    public ApiResponse<Page<ProductResponse>> getProductByCategory(
             @PathVariable Long categoryId,
-            @RequestParam String name,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size){
-        return productService.getProductByCategoryId(
-                categoryId,
-                page,
-                size
-        );
+
+        Page<ProductResponse> response =  productService.getProductByCategoryId(categoryId, page, size);
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 
     @GetMapping("/category/name/{categoryName}")
-    public Page<ProductResponse> getProductByCategoryName(
+    public ApiResponse<Page<ProductResponse>> getProductByCategoryName(
             @PathVariable String categoryName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size){
-        return productService.getProductByCategoryName(
-                categoryName,
-                page,
-                size
-        );
+        Page<ProductResponse> response = productService.getProductByCategoryName(categoryName, page, size);
+        return ApiResponse.<Page<ProductResponse>>builder()
+                .success(true)
+                .message("Product fetched successfully")
+                .data(response)
+                .build();
     }
 }
