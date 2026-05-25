@@ -37,7 +37,6 @@ public class JwtAuthFilter
 
         String authHeader =
                 request.getHeader("Authorization");
-        System.out.println(authHeader);
 
         if (authHeader == null
                 || !authHeader.startsWith("Bearer ")) {

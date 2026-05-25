@@ -5,6 +5,8 @@ import com.company.mini_grocery.dto.request.ProductRequest;
 import com.company.mini_grocery.dto.request.UpdateStockRequest;
 import com.company.mini_grocery.dto.response.ProductResponse;
 import com.company.mini_grocery.service.ProductService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,10 +16,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
+@Tag(name = "Product APIs", description = "Operations related to products")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
 
+    @Operation(summary = "Create product")
     @PostMapping
     public ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request){
 
@@ -29,6 +33,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Get all products")
     @GetMapping
     public ApiResponse<List<ProductResponse>> getAllProducts(){
         List<ProductResponse> response =  productService.getAllProducts();
@@ -39,6 +44,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Get products by id")
     @GetMapping("/{id}")
     public ApiResponse<ProductResponse> getProductById(@PathVariable Long id){
 
@@ -51,6 +57,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "update Product By Id")
     @PutMapping("/{id}")
     public ApiResponse<ProductResponse> updateProductById(@PathVariable Long id,
                                              @Valid @RequestBody ProductRequest request){
@@ -61,7 +68,7 @@ public class ProductController {
                 .data(response)
                 .build();
     }
-
+    @Operation(summary = "Delete Product By Id")
     @DeleteMapping("/{id}")
     public ApiResponse<Void> deleteProductById(@PathVariable Long id){
         productService.deleteProduct(id);
@@ -71,7 +78,7 @@ public class ProductController {
                 .data(null)
                 .build();
     }
-
+    @Operation(summary = "Add product to stock")
     @PatchMapping("/{id}/add-stock")
     public ApiResponse<ProductResponse> addStock(@PathVariable Long id,
                                     @Valid @RequestBody UpdateStockRequest request) {
@@ -83,6 +90,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Reduce product from stock")
     @PatchMapping("/{id}/reduce-stock")
     public ApiResponse<ProductResponse> reduceStock(@PathVariable Long id,@Valid @RequestBody UpdateStockRequest request){
         ProductResponse response = productService.reduceStock(id,request.getQuantity());
@@ -94,6 +102,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Get low stock product")
     @GetMapping("/low-stock")
     public ApiResponse<List<ProductResponse>> getLowStockProduct(@RequestParam Integer threshold){
         List<ProductResponse> response = productService.getLowStockProducts(threshold);
@@ -104,7 +113,7 @@ public class ProductController {
                 .data(response)
                 .build();
     }
-
+    @Operation(summary = "Get expired product")
     @GetMapping("/expired")
     public ApiResponse<List<ProductResponse>> getExpiredProducts(){
 
