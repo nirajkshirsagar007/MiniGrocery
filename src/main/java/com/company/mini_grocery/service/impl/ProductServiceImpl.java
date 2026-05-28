@@ -11,12 +11,14 @@ import com.company.mini_grocery.repository.CategoryRepository;
 import com.company.mini_grocery.repository.ProductRepository;
 import com.company.mini_grocery.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
@@ -24,6 +26,8 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryRepository categoryRepository;
 
     public ProductResponse createProduct(ProductRequest request){
+
+        log.info("Creating product with name: {}",request.getName());
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(()-> new CategoryNotFoundException("Category not found"));
 
@@ -37,11 +41,13 @@ public class ProductServiceImpl implements ProductService {
                 .build();
 
         Product saved = productRepository.save(product);
+        log.info("Product created successfully with id: {}",saved.getId());
         return mapToResponse(saved);
     }
 
     @Override
     public List<ProductResponse> getAllProducts() {
+        log.info("Product fetched successfully.");
         return productRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
@@ -49,6 +55,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public ProductResponse getProductById(Long id){
+        log.info("Product fetched successfully with id: {}",id);
+
         Product product = productRepository.findById( id)
                 .orElseThrow(()->new ProductNotFoundException("Product not found with id: "+ id));
         return mapToResponse(product);
@@ -57,10 +65,13 @@ public class ProductServiceImpl implements ProductService {
 
     public ProductResponse updateProduct(Long id, ProductRequest request){
         Product product = productRepository.findById(id)
-                .orElseThrow(()-> new ProductNotFoundException("Product not found"));
+                .orElseThrow(()-> { log.error("product not found with id: {}",id);
+                    return new ProductNotFoundException("Product not found");
+                });
 
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new CategoryNotFoundException("Category not found."));
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(()->{ log.error("category not found with id: {}",request.getCategoryId());
+                        return new CategoryNotFoundException("Category not found.");});
 
         product.setName(request.getName());
         product.setPrice(request.getPrice());
@@ -69,6 +80,7 @@ public class ProductServiceImpl implements ProductService {
         product.setBarcode(request.getBarcode());
 
         Product updated = productRepository.save(product);
+        log.info("Product updated successfully with id: {}",updated.getId());
         return mapToResponse(updated);
     }
 
@@ -76,6 +88,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(()->new ProductNotFoundException("Product not found"));
         productRepository.delete(product);
+        log.info("Product deleted successfully with id: {}",id);
     }
 
     @Override
@@ -84,6 +97,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(()-> new ProductNotFoundException("Product Not found with id: "+ id));
 
         product.setQuantity(product.getQuantity() + quantity);
+        log.info("Product added to the stock successfully.",id);
         return  mapToResponse(productRepository.save(product));
     }
 
@@ -92,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(()-> new ProductNotFoundException("Product not found with id: "+ id ));
 
         if(product.getQuantity() < quantity){
-            throw new InsuffecientStockException("Insuffecient Stock ");
+            throw new InsuffecientStockException("Insufficient Stock ");
         }
 
         product.setQuantity(product.getQuantity() - quantity);
