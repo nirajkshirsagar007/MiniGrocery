@@ -113,7 +113,7 @@ public class ProductController {
                 .data(response)
                 .build();
     }
-    @Operation(summary = "Get expired product")
+    @Operation(summary = "Get expired products")
     @GetMapping("/expired")
     public ApiResponse<List<ProductResponse>> getExpiredProducts(){
 
@@ -125,6 +125,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "get products pagewise")
     @GetMapping("/paginated")
     public ApiResponse<Page<ProductResponse>> getProducts(
             @RequestParam(defaultValue = "0") int page,
@@ -141,6 +142,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Search products")
     @GetMapping("/search")
     public ApiResponse<Page<ProductResponse>> searchProducts(
             @RequestParam String name,
@@ -154,6 +156,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Get product by category id")
     @GetMapping("/category/{categoryId}")
     public ApiResponse<Page<ProductResponse>> getProductByCategory(
             @PathVariable Long categoryId,
@@ -168,6 +171,7 @@ public class ProductController {
                 .build();
     }
 
+    @Operation(summary = "Get product by category name")
     @GetMapping("/category/name/{categoryName}")
     public ApiResponse<Page<ProductResponse>> getProductByCategoryName(
             @PathVariable String categoryName,
