@@ -5,6 +5,7 @@ import com.company.mini_grocery.dto.request.LoginRequest;
 import com.company.mini_grocery.dto.request.RegisterRequest;
 import com.company.mini_grocery.dto.response.AuthResponse;
 import com.company.mini_grocery.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(summary = "Register")
     @PostMapping("/register")
     public ApiResponse<AuthResponse> register(
             @Valid @RequestBody RegisterRequest request){
@@ -33,6 +35,7 @@ public class AuthController {
                 .build();
     }
 
+    @Operation(summary = "Login")
     @PostMapping("/login")
     public ApiResponse<AuthResponse> login(
             @Valid @RequestBody LoginRequest request){
